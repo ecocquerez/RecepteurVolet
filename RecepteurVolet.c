@@ -9,6 +9,7 @@
 #include <delays.h>
 #include <spi.h>
 #include <EEP.h>
+#include <timers.h>
 #include "SystemProfile.h"
 #include "WirelessProtocols/MCHP_API.h"
 
@@ -43,7 +44,7 @@
 
 // CONFIG4L
 #pragma config STVREN = ON      // Stack Full/Underflow Reset (Stack full/underflow will cause Reset)
-#pragma config LVP = ON         // Single-Supply ICSP Enable bit (Single-Supply ICSP enabled if MCLRE is also 1)
+#pragma config LVP = OFF         // Single-Supply ICSP Enable bit (Single-Supply ICSP enabled if MCLRE is also 1)
 #pragma config XINST = OFF      // Extended Instruction Set Enable bit (Instruction set extension and Indexed Addressing mode disabled)
 
 // CONFIG5L
@@ -94,14 +95,14 @@ BYTE    AdditionalNodeID[ADDITIONAL_NODE_ID_SIZE] = {0x00};
 #endif
 
 #pragma romdata myaddress
-rom unsigned char addr1 = 0x34;
-rom unsigned char addr2 = 0x67;
-rom unsigned char addr3 = 0x01;
-rom unsigned char addr4 = 0x02;
-rom unsigned char addr5 = 0x03;
-rom unsigned char addr6 = 0x04;
-rom unsigned char addr7 = 0x05;
-rom unsigned char addr8 = 0x06;
+rom unsigned char addr1 = 0x06;
+rom unsigned char addr2 = 0x08;
+rom unsigned char addr3 = 0x26;
+rom unsigned char addr4 = 0x83;
+rom unsigned char addr5 = 0x82;
+rom unsigned char addr6 = 0x00;
+rom unsigned char addr7 = 0x00;
+rom unsigned char addr8 = 0x02;
 rom unsigned char addr9 = 0x14;
 rom unsigned char addr10 = 0x15;
 #pragma romdata
@@ -113,6 +114,111 @@ extern BYTE myLongAddress[MY_ADDRESS_LENGTH];
 extern BYTE TxBuffer[TX_BUFFER_SIZE];
 extern WORD myPrivatePanId;
 // Initialisation des paramètres hardware de la carte
+
+volatile BYTE ledValue = 0;
+void BoardInit(void);
+void LitMyMiwiAddress(void);
+void LitMyPrivatePanID(void);
+void EcritMyPrivatePanID(void);
+void EcritMyMiwiAddress(void);
+
+
+
+
+void main(void)
+{
+    char value = 0;
+    BYTE i;
+    BYTE numberNetwork = 0x00;
+    unsigned char lastLed[3];
+    CCP1CON = 0x00;
+    TRISA = TRISA & 0xB8;
+    TRISB = 0x00;
+    //TRISD = 0xFC;
+//    PORTEbits.RDPU = 1;
+    LED1 = 1;
+    LED2 = 1;
+    INTCON2bits.RBPU = 0;
+    INTCON2bits.INTEDG2 = 0;
+    //Timer 1
+    T1CON = 0b00110011;
+    TMR1H = 0x00;
+    TMR1L = 0x00;
+    PIE1bits.TMR1IE = 1;
+    T1CONbits.TMR1ON = 1;
+    INTCONbits.PEIE = 1;
+    INTCONbits.GIE = 1;
+    INTCONbits.GIEH = 1;
+
+
+    LED3 = 1;
+    LED4 = 1;
+    LED5 = 1;
+
+    //Configuration du SPI
+    //Reset du miwi
+    DisableIntSPI1;
+
+    BoardInit();
+    for(i = 0; i < 3; i++)
+    {
+        lastLed[i] = 0x32;
+    }
+    CloseSPI1();
+    OpenSPI1(SPI_FOSC_64,MODE_00,SMPMID);
+    //Lecture des informations Miwi
+    LitMyMiwiAddress();
+    LitMyPrivatePanID();
+
+    MiApp_ProtocolInit(FALSE);
+    do
+    {
+        numberNetwork = MiApp_SearchConnection(5,0x07FFF800);
+        if(numberNetwork > 0)
+        {
+            for(i = 0; i < ACTIVE_SCAN_RESULT_SIZE ; i++)
+            {
+                if(ActiveScanResults[i].PANID.Val == 0x1415)
+                {
+                    value = MiApp_EstablishConnection(i,CONN_MODE_DIRECT);
+                    break;
+                }
+            }
+        }
+    }while(numberNetwork <= 0);
+    //On allume la led de controle
+    LATCbits.LATC6  = 1;
+    while(1)
+    {
+        if(MiApp_MessageAvailable())
+        {
+            if(rxMessage.flags.bits.broadcast == 1)
+            {
+                //Message envoyé en broadcast.
+                CMD_DOWN  = 1;
+            }
+            else
+            {
+                CMD_DOWN  = 0;
+            }
+            MiApp_DiscardMessage();
+        }
+        else
+        {
+        }
+    }
+    return;
+}
+void UserInterruptHandler(void)
+{
+    if(PIR1bits.TMR1IF == 1)
+    {
+        LATCbits.LATC6 = ledValue;
+        ledValue = !ledValue;
+        PIR1bits.TMR1IF = 0;
+    }
+}
+
 void BoardInit(void)
 {
     // primary internal oscillator
@@ -171,121 +277,4 @@ void EcritMyPrivatePanID(void)
     travail = myPrivatePanId & 0xFF;
     Write_b_eep(9,travail);
     Busy_eep();
-}
-
-
-void main(void)
-{
-    char value = 0;
-    BYTE i;
-    BYTE noise = 0xFF;
-    DWORD channelMap = 0x00000001;
-    BYTE newChannel = 0x00;
-    unsigned char lastLed[3];
-    BYTE destinataire[MY_ADDRESS_LENGTH] = {0x31,0x32,0x87,0x67,0x04,0x33,0x22,0x11};
-    CCP1CON = 0x00;
-    TRISA = TRISA & 0xB8;
-    TRISB = 0x00;
-    //TRISD = 0xFC;
-//    PORTEbits.RDPU = 1;
-    LED1 = 1;
-    LED2 = 1;
-    INTCON2bits.RBPU = 0;
-    INTCON2bits.INTEDG2 = 0;
-    INTCONbits.GIEH = 1;
-
-    LED3 = 1;
-    LED4 = 1;
-    LED5 = 1;
-
-    //Configuration du SPI
-    //Reset du miwi
-    DisableIntSPI1;
-
-    BoardInit();
-    for(i = 0; i < 3; i++)
-    {
-        lastLed[i] = 0x32;
-    }
-    CloseSPI1();
-    OpenSPI1(SPI_FOSC_64,MODE_00,SMPMID);
-    //Lecture des informations Miwi
-    LitMyMiwiAddress();
-    LitMyPrivatePanID();
-
-    MiApp_ProtocolInit(FALSE);
-    MiApp_SetChannel(16);
-    value  = MiApp_NoiseDetection(0x07FFF800,5,NOISE_DETECT_ENERGY,&noise);
-    newChannel = value;
-    channelMap = channelMap << value;
-    value = MiApp_StartConnection(START_CONN_ENERGY_SCN,10,channelMap);
-    MiApp_ConnectionMode(ENABLE_ALL_CONN);
-    LATCbits.LATC6  = 1;
-    while(1)
-    {
-        if(MiApp_MessageAvailable())
-        {
-            //Traitement du message
-            if(rxMessage.PayloadSize == 3)
-            {
-                if(rxMessage.Payload[0] == 0x12)
-                {
-                    switch(rxMessage.Payload[1])
-                    {
-                        case 0x01:
-                            break;
-                        case 0x02:
-                            break;
-                        case 0x03:
-                            break;
-                    }
-                }
-            }
-            for(i = 0; i < 8; i++)
-            {
-                value = rxMessage.SourceAddress[i];
-            }
-            MiApp_DiscardMessage();
-        }
-        else
-        {
-//            if(INPUT1 != lastLed[0])
-//            {
-//
-//                MiApp_FlushTx();
-//                MiApp_WriteData(0x12); //Inversion de la led 1
-//                MiApp_WriteData(0x01); //Inversion de la led 1
-//                MiApp_WriteData(INPUT1); //Inversion de la led 1
-//                MiApp_UnicastConnection(0,FALSE);
-//                lastLed[0] = INPUT1;
-//            }
-//            if(INPUT2 != lastLed[1])
-//            {
-//                MiApp_FlushTx();
-//                MiApp_WriteData(0x12); //Inversion de la led 1
-//                MiApp_WriteData(0x02); //Inversion de la led 1
-//                MiApp_WriteData(INPUT2); //Inversion de la led 1
-//                value = MiApp_UnicastAddress(destinataire,TRUE,FALSE);
-//                lastLed[1] = INPUT2;
-//            }
-//            if(INPUT3 != lastLed[2])
-//            {
-//                MiApp_FlushTx();
-//                MiApp_WriteData(0x12); //Inversion de la led 1
-//                MiApp_WriteData(0x03); //Inversion de la led 1
-//                MiApp_WriteData(INPUT3); //Inversion de la led 1
-//  //              MiApp_UnicastAddress(destinataire, TRUE,FALSE);
-//                MiApp_BroadcastPacket(FALSE);
-//                lastLed[2] = INPUT3;
-//            }
-        }
-    }
-    return;
-}
-void UserInterruptHandler(void)
-{
-    unsigned char toto;
-    toto = 0x00;
-    toto = toto + 1;
-
 }
