@@ -77,17 +77,12 @@
 // CONFIG7H
 #pragma config EBTRB = OFF      // Boot Block Table Read Protect (Boot block is not protected from table reads executed in other blocks)
 
+typedef struct defInternal
+{
+    BYTE SendAlive;
+    BYTE SendAliveTimeOut;
+}Internal, * pInternal;
 
-
-#define LED1 LATAbits.LATA0
-#define LED2 LATAbits.LATA2
-#define LED3 LATAbits.LATA3
-#define LED4 LATAbits.LATA4
-#define LED5 LATAbits.LATA5
-
-#define INPUT1 PORTAbits.RA6
-#define INPUT2 PORTAbits.RA7
-#define INPUT3 PORTAbits.RA5
 
 
 #if ADDITIONAL_NODE_ID_SIZE > 0
@@ -121,23 +116,17 @@ void LitMyMiwiAddress(void);
 void LitMyPrivatePanID(void);
 void EcritMyPrivatePanID(void);
 void EcritMyMiwiAddress(void);
-
-
+unsigned char DoConnection(void);
+void LitInternalParameters(pInternal pLecture);
 
 
 void main(void)
 {
+    Internal travail;
     char value = 0;
-    BYTE i;
-    BYTE numberNetwork = 0x00;
-    unsigned char lastLed[3];
     CCP1CON = 0x00;
     TRISA = TRISA & 0xB8;
     TRISB = 0x00;
-    //TRISD = 0xFC;
-//    PORTEbits.RDPU = 1;
-    LED1 = 1;
-    LED2 = 1;
     INTCON2bits.RBPU = 0;
     INTCON2bits.INTEDG2 = 0;
     //Timer 1
@@ -151,41 +140,23 @@ void main(void)
     INTCONbits.GIEH = 1;
 
 
-    LED3 = 1;
-    LED4 = 1;
-    LED5 = 1;
-
     //Configuration du SPI
     //Reset du miwi
     DisableIntSPI1;
 
     BoardInit();
-    for(i = 0; i < 3; i++)
-    {
-        lastLed[i] = 0x32;
-    }
     CloseSPI1();
     OpenSPI1(SPI_FOSC_64,MODE_00,SMPMID);
     //Lecture des informations Miwi
     LitMyMiwiAddress();
     LitMyPrivatePanID();
-
+    LitInternalParameters(&travail);
     MiApp_ProtocolInit(FALSE);
     do
     {
-        numberNetwork = MiApp_SearchConnection(5,0x07FFF800);
-        if(numberNetwork > 0)
-        {
-            for(i = 0; i < ACTIVE_SCAN_RESULT_SIZE ; i++)
-            {
-                if(ActiveScanResults[i].PANID.Val == 0x1415)
-                {
-                    value = MiApp_EstablishConnection(i,CONN_MODE_DIRECT);
-                    break;
-                }
-            }
-        }
-    }while(numberNetwork <= 0);
+        value = DoConnection();
+    }while(value == 0xff);
+
     //On allume la led de controle
     LATCbits.LATC6  = 1;
     while(1)
@@ -217,6 +188,26 @@ void UserInterruptHandler(void)
         ledValue = !ledValue;
         PIR1bits.TMR1IF = 0;
     }
+}
+//Init de la connexion ou de la reconnexion
+unsigned char DoConnection(void)
+{
+    unsigned char numberNetwork = 0x00;
+    unsigned char i = 0;
+    unsigned char value = 0xFF;
+    numberNetwork = MiApp_SearchConnection(5,0x07FFF800);
+    if(numberNetwork > 0)
+    {
+        for(i = 0; i < ACTIVE_SCAN_RESULT_SIZE ; i++)
+        {
+            if(ActiveScanResults[i].PANID.Val == myPANID.Val)
+            {
+                value = MiApp_EstablishConnection(i,CONN_MODE_INDIRECT);
+                break;
+            }
+        }
+    }
+    return value;
 }
 
 void BoardInit(void)
@@ -277,4 +268,10 @@ void EcritMyPrivatePanID(void)
     travail = myPrivatePanId & 0xFF;
     Write_b_eep(9,travail);
     Busy_eep();
+}
+
+void LitInternalParameters(pInternal pLecture)
+{
+    pLecture->SendAlive = Read_b_eep(10);
+    pLecture->SendAliveTimeOut = Read_b_eep(11);
 }

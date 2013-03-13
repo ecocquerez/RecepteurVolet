@@ -30,4 +30,5 @@
 
 #define TMRL            TMR0L
 #define GetInstructionClock()	(CLOCK_FREQ/4)
+
 #endif // HarwareProfile_h
