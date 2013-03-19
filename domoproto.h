@@ -13,7 +13,7 @@ typedef struct defEntete
     BYTE DeviceType; //Type de device, cf enumeration
     BYTE Group; // Numéro de groupe
     BYTE IndexInGroup; //Numéro de l'index dans le groupe
-    BYTE IndexInBoard; //Numéro de la fonctionnalité sur la carte, sur une carte 8 relais, on peut sélectionner le relais 3
+    BYTE IndexOnBoard; //Numéro de la fonctionnalité sur la carte, sur une carte 8 relais, on peut sélectionner le relais 3
     BYTE Command; //Commande à envoyer
     BYTE lenValue; //Longueur des données à suivre
 }Entete;
@@ -37,6 +37,9 @@ enum EnumDeviceType
 #define IndexGroupBroadcast 0xFF
 #define IndexBoardBroadcast 0xFF
 
+#define TRUE 0x01
+#define FALSE 0x00
+
 enum EnumCommand
 {
     ShutterDownShort = 1,
@@ -48,6 +51,9 @@ enum EnumCommand
     Pulse,
     AfficheString,
     AfficheProgress,
+    NewAddress,
+    NewPanID,
+    NewGroup
 };
 
 

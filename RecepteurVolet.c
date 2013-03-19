@@ -12,6 +12,7 @@
 #include <timers.h>
 #include "SystemProfile.h"
 #include "WirelessProtocols/MCHP_API.h"
+#include "domoproto.h"
 
 // CONFIG1L
 #pragma config PLLSEL = PLL4X   // PLL Selection (4x clock multiplier)
@@ -81,6 +82,10 @@ typedef struct defInternal
 {
     BYTE SendAlive;
     BYTE SendAliveTimeOut;
+    BYTE MyGroup;
+    BYTE IndexInGroup;
+    BYTE IndexOnBoard;
+    BYTE MaxTimeOut;
 }Internal, * pInternal;
 
 
@@ -99,7 +104,13 @@ rom unsigned char addr6 = 0x00;
 rom unsigned char addr7 = 0x00;
 rom unsigned char addr8 = 0x02;
 rom unsigned char addr9 = 0x14;
-rom unsigned char addr10 = 0x15;
+rom unsigned char addr10 = 0x01;
+rom unsigned char addr11 = 0x01;    //Send Alive
+rom unsigned char addr12 = 0x3C;    //Periode
+rom unsigned char addr13 = 0x01;    //Group
+rom unsigned char addr14 = 0x01;    //Index In Group
+rom unsigned char addr15 = 0x01;    //Index On Board
+rom unsigned char addr16 = 0x50;    //TimeOut
 #pragma romdata
 
 
@@ -123,7 +134,9 @@ void LitInternalParameters(pInternal pLecture);
 void main(void)
 {
     Internal travail;
+    Entete * pReception;
     char value = 0;
+    unsigned char IgnoreMessage;
     CCP1CON = 0x00;
     TRISA = TRISA & 0xB8;
     TRISB = 0x00;
@@ -163,14 +176,29 @@ void main(void)
     {
         if(MiApp_MessageAvailable())
         {
+            IgnoreMessage = FALSE;
+            pReception = (Entete *)rxMessage.Payload;
             if(rxMessage.flags.bits.broadcast == 1)
             {
-                //Message envoyé en broadcast.
-                CMD_DOWN  = 1;
+                if(pReception->Group != travail->MyGroup && pReception->Group != 0xFF)
+                {
+                    IgnoreMessage = TRUE;
+                }
             }
-            else
+            if(IgnoreMessage == FALSE)
             {
-                CMD_DOWN  = 0;
+                if(pReception->DeviceType != Shutter)
+                {
+                    IgnoreMessage = TRUE;
+                }
+                if(pReception->IndexOnBoard != 0xFF && pReception->IndexOnBoard != travail->IndexOnBoard)
+                {
+                    IgnoreMessage = TRUE;
+                }
+            }
+            if(IgnoreMessage == FALSE)
+            {
+
             }
             MiApp_DiscardMessage();
         }
@@ -274,4 +302,8 @@ void LitInternalParameters(pInternal pLecture)
 {
     pLecture->SendAlive = Read_b_eep(10);
     pLecture->SendAliveTimeOut = Read_b_eep(11);
+    pLecture->MyGroup = Read_b_eep(12);
+    pLecture->IndexInGroup = Read_b_eep(13);
+    pLecture->IndexOnBoard = Read_b_eep(14);
+    pLecture->MaxTimeOut = Read_b_eep(15);
 }

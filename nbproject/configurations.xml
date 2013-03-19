@@ -28,6 +28,7 @@
       <itemPath>ConfigApp.h</itemPath>
       <itemPath>HardwareProfile.h</itemPath>
       <itemPath>SystemProfile.h</itemPath>
+      <itemPath>domoproto.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LibraryFiles"
                    displayName="Library Files"
@@ -73,7 +74,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>C18</languageToolchain>
-        <languageToolchainVersion>3.45</languageToolchainVersion>
+        <languageToolchainVersion></languageToolchainVersion>
         <platform>2</platform>
       </toolsSet>
       <compileType>
