@@ -121,6 +121,8 @@ extern BYTE TxBuffer[TX_BUFFER_SIZE];
 extern WORD myPrivatePanId;
 // Initialisation des paramètres hardware de la carte
 
+volatile unsigned char HaveToSendHearthBeat;
+
 volatile BYTE ledValue = 0;
 void BoardInit(void);
 void LitMyMiwiAddress(void);
@@ -137,6 +139,8 @@ void main(void)
     Entete * pReception;
     char value = 0;
     unsigned char IgnoreMessage;
+
+    HaveToSendHearthBeat = 0;
     CCP1CON = 0x00;
     TRISA = TRISA & 0xB8;
     TRISB = 0x00;
@@ -153,16 +157,17 @@ void main(void)
     INTCONbits.GIEH = 1;
 
 
-    //Configuration du SPI
+    // SPI configuration
     //Reset du miwi
     DisableIntSPI1;
 
     BoardInit();
     CloseSPI1();
     OpenSPI1(SPI_FOSC_64,MODE_00,SMPMID);
-    //Lecture des informations Miwi
+    //Read necessary Miwi Information in eeprom
     LitMyMiwiAddress();
     LitMyPrivatePanID();
+    //Read internal parameters
     LitInternalParameters(&travail);
     MiApp_ProtocolInit(FALSE);
     do
@@ -180,6 +185,7 @@ void main(void)
             pReception = (Entete *)rxMessage.Payload;
             if(rxMessage.flags.bits.broadcast == 1)
             {
+                //if message is broadcast, check if message is for my group or group is broadcast
                 if(pReception->Group != travail->MyGroup && pReception->Group != 0xFF)
                 {
                     IgnoreMessage = TRUE;
@@ -187,10 +193,12 @@ void main(void)
             }
             if(IgnoreMessage == FALSE)
             {
+                //Message is not for shutter, ignore it
                 if(pReception->DeviceType != Shutter)
                 {
                     IgnoreMessage = TRUE;
                 }
+                //Message is not for all shutter on board and not for my index
                 if(pReception->IndexOnBoard != 0xFF && pReception->IndexOnBoard != travail->IndexOnBoard)
                 {
                     IgnoreMessage = TRUE;
@@ -204,6 +212,11 @@ void main(void)
         }
         else
         {
+            if(HaveToSendHearthBeat)
+            {
+                //If we have to send Hearth beat message, send it ant reset the flag
+                HaveToSendHearthBeat = 0;
+            }
         }
     }
     return;
