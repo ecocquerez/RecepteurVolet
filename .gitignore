@@ -1,2 +1,6 @@
 #ignore build directories
 build/
+dist/
+
+#ignore des fichiers d'erreurs
+*.err
