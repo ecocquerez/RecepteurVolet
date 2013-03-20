@@ -32,4 +32,9 @@
 #define TMRL            TMR0L
 #define GetInstructionClock()	(CLOCK_FREQ/4)
 
+#define TRIS_CMD_VOLET1_UP      TRISCbits.TRISC7
+#define CMD_VOLET1_UP           LATCbits.LATC7
+#define TRIS_CMD_VOLET1_DOWN    TRISCbits.TRISC6
+#define CMD_VOLET1_DOWN         LATCbits.LATC6
+
 #endif // HarwareProfile_h

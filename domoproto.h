@@ -46,6 +46,7 @@ enum EnumCommand
     ShutterUpShort,
     ShutterDownLong,
     ShutterUpLong,
+    ShutterStop,
     RelayOn,
     RelayOff,
     Pulse,
@@ -57,6 +58,11 @@ enum EnumCommand
     HearthBeat
 };
 
-
+enum EnumState
+{
+    Iddle,
+    Descending,
+    Rising
+};
 #endif	/* DOMOPROTO_H */
 

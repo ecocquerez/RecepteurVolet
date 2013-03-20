@@ -88,7 +88,11 @@ typedef struct defInternal
     BYTE MaxTimeOut;
 }Internal, * pInternal;
 
-
+typedef struct defShutterState
+{
+    BYTE stateShutter1;
+    BYTE stateShutter2;
+}ShutterState;
 
 #if ADDITIONAL_NODE_ID_SIZE > 0
 BYTE    AdditionalNodeID[ADDITIONAL_NODE_ID_SIZE] = {0x00};
@@ -122,8 +126,8 @@ extern WORD myPrivatePanId;
 // Initialisation des paramètres hardware de la carte
 
 volatile unsigned char HaveToSendHearthBeat;
-
 volatile BYTE ledValue = 0;
+
 Entete Emission;
 Internal travail;
 
@@ -139,6 +143,7 @@ void WriteEntete(void);
 void main(void)
 {
     Entete * pReception;
+    ShutterState EtatCourrant;
     char value = 0;
     unsigned char IgnoreMessage;
 
@@ -152,10 +157,18 @@ void main(void)
         Nop();
     }
 
+    EtatCourrant.stateShutter1 = Iddle;
+    EtatCourrant.stateShutter2 = Iddle;
+
     HaveToSendHearthBeat = 0;
     CCP1CON = 0x00;
     TRISA = TRISA & 0xB8;
     TRISB = 0x00;
+    //Shutter output
+    TRIS_CMD_VOLET1_DOWN = 0;
+    TRIS_CMD_VOLET1_UP = 0;
+    CMD_VOLET1_DOWN = 0;
+    CMD_VOLET1_UP = 0;
     INTCON2bits.RBPU = 0;
     INTCON2bits.INTEDG2 = 0;
     //Timer 1
@@ -203,7 +216,7 @@ void main(void)
             if(rxMessage.flags.bits.broadcast == 1)
             {
                 //if message is broadcast, check if message is for my group or group is broadcast
-                if(pReception->Group != travail->MyGroup && pReception->Group != 0xFF)
+                if(pReception->Group != travail.MyGroup && pReception->Group != 0xFF)
                 {
                     IgnoreMessage = TRUE;
                 }
@@ -216,14 +229,42 @@ void main(void)
                     IgnoreMessage = TRUE;
                 }
                 //Message is not for all shutter on board and not for my index
-                if(pReception->IndexOnBoard != 0xFF && pReception->IndexOnBoard != travail->IndexOnBoard)
+                if(pReception->IndexOnBoard != 0xFF && pReception->IndexOnBoard != travail.IndexOnBoard)
                 {
                     IgnoreMessage = TRUE;
                 }
             }
             if(IgnoreMessage == FALSE)
             {
-
+                if(pReception->IndexOnBoard == 1 || pReception->IndexOnBoard == 0xFF)
+                {
+                    //If we receive command while moving shutter, we have to stop them
+                    if(EtatCourrant.stateShutter1 != Iddle && pReception->Command != ShutterStop)
+                    {
+                        pReception->Command = ShutterStop;
+                    }
+                    switch(pReception->Command)
+                    {
+                        case ShutterDownShort:
+                        case ShutterDownLong:
+                            //Down with timer
+                            CMD_VOLET1_UP = 0;
+                            CMD_VOLET1_DOWN = 1;
+                            EtatCourrant.stateShutter1 = Descending;
+                            break;
+                        case ShutterUpShort:
+                        case ShutterUpLong:
+                            CMD_VOLET1_DOWN = 0;
+                            CMD_VOLET1_UP = 1;
+                            EtatCourrant.stateShutter1 = Rising;
+                            break;
+                        case ShutterStop:
+                            CMD_VOLET1_DOWN = 0;
+                            CMD_VOLET1_UP = 0;
+                            EtatCourrant.stateShutter1 = Iddle;
+                            break;
+                    }
+                }
             }
             MiApp_DiscardMessage();
         }
@@ -269,6 +310,7 @@ void UserInterruptHandler(void)
             LATCbits.LATC6 = ledValue;
             ledValue = !ledValue;
             //One second elapsed
+            //Check if we have to send HearthBeat
             if(travail.SendAlive == 1)
             {
                 ellapsed++;
