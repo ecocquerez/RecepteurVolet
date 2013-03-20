@@ -4,3 +4,6 @@ dist/
 
 #ignore des fichiers d'erreurs
 *.err
+
+#ignore du fichier de propriété spécifique
+nbproject/Makefile-genesis.properties
