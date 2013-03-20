@@ -16,7 +16,7 @@
 
 // CONFIG1L
 #pragma config PLLSEL = PLL4X   // PLL Selection (4x clock multiplier)
-#pragma config CFGPLLEN = ON    // PLL Enable Configuration bit (PLL Enabled)
+#pragma config CFGPLLEN = OFF   // PLL Enable Configuration bit (PLL Disabled)
 #pragma config CPUDIV = NOCLKDIV// CPU System Clock Postscaler (CPU uses system clock (no divide))
 #pragma config LS48MHZ = SYS24X4// Low Speed USB mode with 48 MHz system clock (System clock at 24 MHz, USB clock divider is set to 4)
 
@@ -124,6 +124,9 @@ extern WORD myPrivatePanId;
 volatile unsigned char HaveToSendHearthBeat;
 
 volatile BYTE ledValue = 0;
+Entete Emission;
+Internal travail;
+
 void BoardInit(void);
 void LitMyMiwiAddress(void);
 void LitMyPrivatePanID(void);
@@ -131,14 +134,23 @@ void EcritMyPrivatePanID(void);
 void EcritMyMiwiAddress(void);
 unsigned char DoConnection(void);
 void LitInternalParameters(pInternal pLecture);
-
+void WriteEntete(void);
 
 void main(void)
 {
-    Internal travail;
     Entete * pReception;
     char value = 0;
     unsigned char IgnoreMessage;
+
+    //Settings oscillator
+    // primary internal oscillator
+    //OSCCON = 0x7B;
+    OSCCON = 0b01101000;
+    while(OSCCONbits.HFIOFS == 0)
+    {
+        //Waiting for stable frequency
+        Nop();
+    }
 
     HaveToSendHearthBeat = 0;
     CCP1CON = 0x00;
@@ -147,9 +159,9 @@ void main(void)
     INTCON2bits.RBPU = 0;
     INTCON2bits.INTEDG2 = 0;
     //Timer 1
-    T1CON = 0b00110011;
-    TMR1H = 0x00;
-    TMR1L = 0x00;
+    T1CON = 0b01110011; //1000000 inc per second
+    TMR1H = 0xC3;
+    TMR1L = 0x50; //We have to count 20 to have 1 second
     PIE1bits.TMR1IE = 1;
     T1CONbits.TMR1ON = 1;
     INTCONbits.PEIE = 1;
@@ -167,6 +179,11 @@ void main(void)
     //Read necessary Miwi Information in eeprom
     LitMyMiwiAddress();
     LitMyPrivatePanID();
+    Emission.DeviceType = Shutter;
+    Emission.Group = travail.MyGroup;
+    Emission.IndexInGroup = travail.IndexInGroup;
+    Emission.IndexOnBoard = travail.IndexOnBoard;
+    Emission.lenValue = 0;
     //Read internal parameters
     LitInternalParameters(&travail);
     MiApp_ProtocolInit(FALSE);
@@ -216,17 +233,53 @@ void main(void)
             {
                 //If we have to send Hearth beat message, send it ant reset the flag
                 HaveToSendHearthBeat = 0;
+                Emission.Command = HearthBeat;
+                MiApp_BroadcastPacket(FALSE );
             }
         }
     }
     return;
 }
+
+void WriteEntete(void)
+{
+    MiApp_FlushTx();
+    MiApp_WriteData(Emission.DeviceType);
+    MiApp_WriteData(Emission.Group);
+    MiApp_WriteData(Emission.IndexInGroup);
+    MiApp_WriteData(Emission.IndexOnBoard);
+    MiApp_WriteData(Emission.Command);
+    MiApp_WriteData(Emission.lenValue);
+
+
+}
 void UserInterruptHandler(void)
 {
+    static unsigned char compteurSeconde = 0x00;
+    static unsigned char ellapsed = 0x00;
     if(PIR1bits.TMR1IF == 1)
     {
-        LATCbits.LATC6 = ledValue;
-        ledValue = !ledValue;
+        //Reset of timer
+        TMR1H = 0xC3;
+        TMR1L = 0x50; //We have to count 20 to have 1 second
+        compteurSeconde++;
+        if(compteurSeconde == 20)
+        {
+            //Just visualize timer
+            LATCbits.LATC6 = ledValue;
+            ledValue = !ledValue;
+            //One second elapsed
+            if(travail.SendAlive == 1)
+            {
+                ellapsed++;
+                if(ellapsed == travail.SendAliveTimeOut)
+                {
+                    ellapsed = 0;
+                    HaveToSendHearthBeat = 1;
+                }
+            }
+            compteurSeconde = 0;
+        }
         PIR1bits.TMR1IF = 0;
     }
 }
@@ -253,8 +306,6 @@ unsigned char DoConnection(void)
 
 void BoardInit(void)
 {
-    // primary internal oscillator
-    //OSCCON = 0x7B;
     WDTCONbits.SWDTEN = 0;
     INTCONbits.GIEH = 1;
     RFIF = 0;

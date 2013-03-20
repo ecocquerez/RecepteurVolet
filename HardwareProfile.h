@@ -7,7 +7,8 @@
 
 #ifndef HarwareProfile_h
 #define HarwareProfile_h
-#define CLOCK_FREQ 24000000
+//Not use of PLL, speed not required
+#define CLOCK_FREQ 8000000
 
 #define RFIF            INTCON3bits.INT2IF
 #define RFIE            INTCON3bits.INT2IE

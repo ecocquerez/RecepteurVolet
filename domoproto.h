@@ -53,7 +53,8 @@ enum EnumCommand
     AfficheProgress,
     NewAddress,
     NewPanID,
-    NewGroup
+    NewGroup,
+    HearthBeat
 };
 
 
