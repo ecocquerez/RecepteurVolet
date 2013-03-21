@@ -126,6 +126,8 @@ extern WORD myPrivatePanId;
 // Initialisation des paramètres hardware de la carte
 
 volatile unsigned char HaveToSendHearthBeat;
+volatile unsigned char TimeOutShutter1;
+volatile unsigned char TimeOutShutter2;
 volatile BYTE ledValue = 0;
 
 Entete Emission;
@@ -146,7 +148,8 @@ void main(void)
     ShutterState EtatCourrant;
     char value = 0;
     unsigned char IgnoreMessage;
-
+    unsigned char TimeOutShutter1Valid = 0x00;
+    unsigned char TimeOutshutter2Valid = 0x00;
     //Settings oscillator
     // primary internal oscillator
     //OSCCON = 0x7B;
@@ -159,7 +162,8 @@ void main(void)
 
     EtatCourrant.stateShutter1 = Iddle;
     EtatCourrant.stateShutter2 = Iddle;
-
+    TimeOutShutter1 = FALSE;
+    TimeOutShutter2 = FALSE;
     HaveToSendHearthBeat = 0;
     CCP1CON = 0x00;
     TRISA = TRISA & 0xB8;
@@ -246,6 +250,8 @@ void main(void)
                     switch(pReception->Command)
                     {
                         case ShutterDownShort:
+                            TimeOutShutter1Valid = TRUE;
+                            TimeOutShutter1 = travail.MaxTimeOut;
                         case ShutterDownLong:
                             //Down with timer
                             CMD_VOLET1_UP = 0;
@@ -253,6 +259,8 @@ void main(void)
                             EtatCourrant.stateShutter1 = Descending;
                             break;
                         case ShutterUpShort:
+                            TimeOutShutter1Valid = TRUE;
+                            TimeOutShutter1 = travail.MaxTimeOut;
                         case ShutterUpLong:
                             CMD_VOLET1_DOWN = 0;
                             CMD_VOLET1_UP = 1;
@@ -261,6 +269,7 @@ void main(void)
                         case ShutterStop:
                             CMD_VOLET1_DOWN = 0;
                             CMD_VOLET1_UP = 0;
+                            TimeOutShutter1Valid = FALSE;
                             EtatCourrant.stateShutter1 = Iddle;
                             break;
                     }
@@ -276,6 +285,16 @@ void main(void)
                 HaveToSendHearthBeat = 0;
                 Emission.Command = HearthBeat;
                 MiApp_BroadcastPacket(FALSE );
+            }
+            if(TimeOutShutter1Valid )
+            {
+                if(TimeOutShutter1 == 0)
+                {
+                    CMD_VOLET1_DOWN = 0;
+                    CMD_VOLET1_UP = 0;
+                    TimeOutShutter1Valid = FALSE;
+                    EtatCourrant.stateShutter1 = Iddle;
+                }
             }
         }
     }
@@ -319,6 +338,14 @@ void UserInterruptHandler(void)
                     ellapsed = 0;
                     HaveToSendHearthBeat = 1;
                 }
+            }
+            if(TimeOutShutter1 != 0)
+            {
+                TimeOutShutter1--;
+            }
+            if(TimeOutShutter2 != 0)
+            {
+                TimeOutShutter2--;
             }
             compteurSeconde = 0;
         }
