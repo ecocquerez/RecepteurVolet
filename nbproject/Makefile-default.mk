@@ -45,11 +45,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/MSPI.o ${OBJECTDIR}/SymbolTime.o ${OBJECTDIR}/MiWi.o ${OBJECTDIR}/MRF24J40.o ${OBJECTDIR}/RecepteurVolet.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/MSPI.o.d ${OBJECTDIR}/SymbolTime.o.d ${OBJECTDIR}/MiWi.o.d ${OBJECTDIR}/MRF24J40.o.d ${OBJECTDIR}/RecepteurVolet.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/MSPI.o ${OBJECTDIR}/SymbolTime.o ${OBJECTDIR}/P2P.o ${OBJECTDIR}/MRF24J40.o ${OBJECTDIR}/RecepteurVolet.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/MSPI.o.d ${OBJECTDIR}/SymbolTime.o.d ${OBJECTDIR}/P2P.o.d ${OBJECTDIR}/MRF24J40.o.d ${OBJECTDIR}/RecepteurVolet.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/MSPI.o ${OBJECTDIR}/SymbolTime.o ${OBJECTDIR}/MiWi.o ${OBJECTDIR}/MRF24J40.o ${OBJECTDIR}/RecepteurVolet.o
+OBJECTFILES=${OBJECTDIR}/MSPI.o ${OBJECTDIR}/SymbolTime.o ${OBJECTDIR}/P2P.o ${OBJECTDIR}/MRF24J40.o ${OBJECTDIR}/RecepteurVolet.o
 
 
 CFLAGS=
@@ -83,35 +83,35 @@ ifeq ($(TYPE_IMAGE), DEBUG_RUN)
 ${OBJECTDIR}/MSPI.o: MSPI.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/MSPI.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MSPI.o   MSPI.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MSPI.o   MSPI.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/MSPI.o 
 	@${FIXDEPS} "${OBJECTDIR}/MSPI.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/SymbolTime.o: SymbolTime.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/SymbolTime.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/SymbolTime.o   SymbolTime.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/SymbolTime.o   SymbolTime.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/SymbolTime.o 
 	@${FIXDEPS} "${OBJECTDIR}/SymbolTime.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
-${OBJECTDIR}/MiWi.o: MiWi.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/P2P.o: P2P.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/MiWi.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MiWi.o   MiWi.c 
-	@${DEP_GEN} -d ${OBJECTDIR}/MiWi.o 
-	@${FIXDEPS} "${OBJECTDIR}/MiWi.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
+	@${RM} ${OBJECTDIR}/P2P.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/P2P.o   P2P.c 
+	@${DEP_GEN} -d ${OBJECTDIR}/P2P.o 
+	@${FIXDEPS} "${OBJECTDIR}/P2P.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/MRF24J40.o: MRF24J40.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/MRF24J40.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MRF24J40.o   MRF24J40.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MRF24J40.o   MRF24J40.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/MRF24J40.o 
 	@${FIXDEPS} "${OBJECTDIR}/MRF24J40.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/RecepteurVolet.o: RecepteurVolet.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/RecepteurVolet.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/RecepteurVolet.o   RecepteurVolet.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/RecepteurVolet.o   RecepteurVolet.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/RecepteurVolet.o 
 	@${FIXDEPS} "${OBJECTDIR}/RecepteurVolet.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
@@ -119,35 +119,35 @@ else
 ${OBJECTDIR}/MSPI.o: MSPI.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/MSPI.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MSPI.o   MSPI.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MSPI.o   MSPI.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/MSPI.o 
 	@${FIXDEPS} "${OBJECTDIR}/MSPI.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/SymbolTime.o: SymbolTime.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/SymbolTime.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/SymbolTime.o   SymbolTime.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/SymbolTime.o   SymbolTime.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/SymbolTime.o 
 	@${FIXDEPS} "${OBJECTDIR}/SymbolTime.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
-${OBJECTDIR}/MiWi.o: MiWi.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/P2P.o: P2P.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
-	@${RM} ${OBJECTDIR}/MiWi.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MiWi.o   MiWi.c 
-	@${DEP_GEN} -d ${OBJECTDIR}/MiWi.o 
-	@${FIXDEPS} "${OBJECTDIR}/MiWi.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
+	@${RM} ${OBJECTDIR}/P2P.o.d 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/P2P.o   P2P.c 
+	@${DEP_GEN} -d ${OBJECTDIR}/P2P.o 
+	@${FIXDEPS} "${OBJECTDIR}/P2P.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/MRF24J40.o: MRF24J40.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/MRF24J40.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MRF24J40.o   MRF24J40.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MRF24J40.o   MRF24J40.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/MRF24J40.o 
 	@${FIXDEPS} "${OBJECTDIR}/MRF24J40.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/RecepteurVolet.o: RecepteurVolet.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/RecepteurVolet.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/RecepteurVolet.o   RecepteurVolet.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -I"." -I".." -I"../.." -ms -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/RecepteurVolet.o   RecepteurVolet.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/RecepteurVolet.o 
 	@${FIXDEPS} "${OBJECTDIR}/RecepteurVolet.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	

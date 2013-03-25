@@ -54,13 +54,13 @@
     // PROTOCOL_P2P enables the application to use MiWi P2P stack. This
     // definition cannot be defined with PROTOCOL_MIWI.
     /*********************************************************************/
-    //#define PROTOCOL_P2P
+    #define PROTOCOL_P2P
 
     /*********************************************************************/
     // PROTOCOL_MIWI enables the application to use MiWi mesh networking
     // stack. This definition cannot be defined with PROTOCOL_P2P.
     /*********************************************************************/
-    #define PROTOCOL_MIWI
+    //#define PROTOCOL_MIWI
 
 
     /*********************************************************************/
@@ -75,8 +75,8 @@
         // coordinator. This definition cannot be defined with 
         // NWK_ROLE_END_DEVICE.
         /*********************************************************************/
-        #define NWK_ROLE_COORDINATOR
-        //#define NWK_ROLE_END_DEVICE
+       #define NWK_ROLE_COORDINATOR
+       // #define NWK_ROLE_END_DEVICE
 
 
 
@@ -246,7 +246,7 @@
 // timeout. RFD depends on the setting of the watchdog timer to wake 
 // up, thus this definition is not used.
 /*********************************************************************/
-#define RFD_WAKEUP_INTERVAL     8
+#define RFD_WAKEUP_INTERVAL     60
 
 
 /*********************************************************************/

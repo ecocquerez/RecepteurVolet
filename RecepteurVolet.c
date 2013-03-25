@@ -86,6 +86,7 @@ typedef struct defInternal
     BYTE IndexInGroup;
     BYTE IndexOnBoard;
     BYTE MaxTimeOut;
+    BYTE AddressMaster[MY_ADDRESS_LENGTH];
 }Internal, * pInternal;
 
 typedef struct defShutterState
@@ -95,7 +96,7 @@ typedef struct defShutterState
 }ShutterState;
 
 #if ADDITIONAL_NODE_ID_SIZE > 0
-BYTE    AdditionalNodeID[ADDITIONAL_NODE_ID_SIZE] = {0x00};
+BYTE    AdditionalNodeID[ADDITIONAL_NODE_ID_SIZE] = {0x32};
 #endif
 
 #pragma romdata myaddress
@@ -115,6 +116,14 @@ rom unsigned char addr13 = 0x01;    //Group
 rom unsigned char addr14 = 0x01;    //Index In Group
 rom unsigned char addr15 = 0x01;    //Index On Board
 rom unsigned char addr16 = 0x50;    //TimeOut
+rom unsigned char addr17 = 0x06;     //Master Address
+rom unsigned char addr18 = 0x08;
+rom unsigned char addr19 = 0x26;
+rom unsigned char addr20 = 0x83;
+rom unsigned char addr21= 0x82;
+rom unsigned char addr22 = 0x00;
+rom unsigned char addr23 = 0x00;
+rom unsigned char addr24 = 0x03;
 #pragma romdata
 
 
@@ -141,6 +150,7 @@ void EcritMyMiwiAddress(void);
 unsigned char DoConnection(void);
 void LitInternalParameters(pInternal pLecture);
 void WriteEntete(void);
+void ReadMasterAddress(pInternal pLecture);
 
 void main(void)
 {
@@ -150,6 +160,7 @@ void main(void)
     unsigned char IgnoreMessage;
     unsigned char TimeOutShutter1Valid = 0x00;
     unsigned char TimeOutshutter2Valid = 0x00;
+    unsigned char Connected = FALSE;
     //Settings oscillator
     // primary internal oscillator
     //OSCCON = 0x7B;
@@ -166,8 +177,10 @@ void main(void)
     TimeOutShutter2 = FALSE;
     HaveToSendHearthBeat = 0;
     CCP1CON = 0x00;
+    ANSELA = 0x00;
+    ANSELB = 0x00;
     TRISA = TRISA & 0xB8;
-    TRISB = 0x00;
+    TRISB = 0x04;
     //Shutter output
     TRIS_CMD_VOLET1_DOWN = 0;
     TRIS_CMD_VOLET1_UP = 0;
@@ -177,8 +190,8 @@ void main(void)
     INTCON2bits.INTEDG2 = 0;
     //Timer 1
     T1CON = 0b01110011; //1000000 inc per second
-    TMR1H = 0xC3;
-    TMR1L = 0x50; //We have to count 20 to have 1 second
+    TMR1H = 0x40;
+    TMR1L = 0xA8; //We have to count 20 to have 1 second
     PIE1bits.TMR1IE = 1;
     T1CONbits.TMR1ON = 1;
     INTCONbits.PEIE = 1;
@@ -196,23 +209,33 @@ void main(void)
     //Read necessary Miwi Information in eeprom
     LitMyMiwiAddress();
     LitMyPrivatePanID();
+    //Read internal parameters
+    LitInternalParameters(&travail);
+    ReadMasterAddress(&travail);
     Emission.DeviceType = Shutter;
     Emission.Group = travail.MyGroup;
     Emission.IndexInGroup = travail.IndexInGroup;
     Emission.IndexOnBoard = travail.IndexOnBoard;
     Emission.lenValue = 0;
-    //Read internal parameters
-    LitInternalParameters(&travail);
-    MiApp_ProtocolInit(FALSE);
     do
     {
         value = DoConnection();
     }while(value == 0xff);
 
+    Connected = TRUE;
     //On allume la led de controle
     LATCbits.LATC6  = 1;
     while(1)
     {
+        if(Connected == FALSE)
+        {
+            value = DoConnection();
+            if(value != 0xFF)
+            {
+                Connected = TRUE;
+            }
+
+        }
         if(MiApp_MessageAvailable())
         {
             IgnoreMessage = FALSE;
@@ -284,17 +307,18 @@ void main(void)
                 //If we have to send Hearth beat message, send it ant reset the flag
                 HaveToSendHearthBeat = 0;
                 Emission.Command = HearthBeat;
-                MiApp_BroadcastPacket(FALSE );
+                WriteEntete();
+                Connected = MiApp_UnicastAddress(travail.AddressMaster, TRUE,FALSE);
             }
-            if(TimeOutShutter1Valid )
+        }
+        if(TimeOutShutter1Valid )
+        {
+            if(TimeOutShutter1 == 0)
             {
-                if(TimeOutShutter1 == 0)
-                {
-                    CMD_VOLET1_DOWN = 0;
-                    CMD_VOLET1_UP = 0;
-                    TimeOutShutter1Valid = FALSE;
-                    EtatCourrant.stateShutter1 = Iddle;
-                }
+                CMD_VOLET1_DOWN = 0;
+                CMD_VOLET1_UP = 0;
+                TimeOutShutter1Valid = FALSE;
+                EtatCourrant.stateShutter1 = Iddle;
             }
         }
     }
@@ -320,8 +344,8 @@ void UserInterruptHandler(void)
     if(PIR1bits.TMR1IF == 1)
     {
         //Reset of timer
-        TMR1H = 0xC3;
-        TMR1L = 0x50; //We have to count 20 to have 1 second
+        TMR1H = 0x40;
+        TMR1L = 0xA8; //We have to count 20 to have 1 second
         compteurSeconde++;
         if(compteurSeconde == 20)
         {
@@ -352,24 +376,47 @@ void UserInterruptHandler(void)
         PIR1bits.TMR1IF = 0;
     }
 }
+
 //Init de la connexion ou de la reconnexion
 unsigned char DoConnection(void)
 {
     unsigned char numberNetwork = 0x00;
     unsigned char i = 0;
     unsigned char value = 0xFF;
-    numberNetwork = MiApp_SearchConnection(5,0x07FFF800);
+    unsigned char noise = 0x00;
+    DWORD channelMap = 0x00000001;
+    //Note from Microchip, We have to clear reception
+    MiApp_ProtocolInit(FALSE);
+    //On définit un port par défaut
+    MiApp_SetChannel(16);
+    MiApp_ConnectionMode(ENABLE_ALL_CONN);
+    if(MiMAC_ReceivedPacket())
+    {
+        MiApp_DiscardMessage();
+    }
+    numberNetwork = MiApp_SearchConnection(10,0x07FFF800);
     if(numberNetwork > 0)
     {
         for(i = 0; i < ACTIVE_SCAN_RESULT_SIZE ; i++)
         {
             if(ActiveScanResults[i].PANID.Val == myPANID.Val)
             {
-                value = MiApp_EstablishConnection(i,CONN_MODE_INDIRECT);
+                MiApp_SetChannel(ActiveScanResults[i].Channel);
+                value = MiApp_EstablishConnection(i,CONN_MODE_DIRECT);
                 break;
             }
         }
     }
+    else
+    {
+        //On recherche un canal pas trop brouillé
+        value = MiApp_NoiseDetection(0x07FFF800,10,NOISE_DETECT_ENERGY,&noise);
+        //On recalcule le channelMap
+        channelMap = channelMap << value;
+        //On lance le PAN sur le channel le moins bruité,
+        value = MiApp_StartConnection(START_CONN_ENERGY_SCN,10,channelMap);
+    }
+    MiApp_ConnectionMode(ENABLE_ALL_CONN);
     return value;
 }
 
@@ -439,4 +486,14 @@ void LitInternalParameters(pInternal pLecture)
     pLecture->IndexInGroup = Read_b_eep(13);
     pLecture->IndexOnBoard = Read_b_eep(14);
     pLecture->MaxTimeOut = Read_b_eep(15);
+}
+
+void ReadMasterAddress(pInternal pLecture)
+{
+    unsigned char compteur = 0;
+    while(compteur <8)
+    {
+        pLecture->AddressMaster[compteur] = Read_b_eep(compteur + 16);
+        compteur++;
+    }
 }
