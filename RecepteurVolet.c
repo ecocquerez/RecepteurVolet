@@ -389,12 +389,12 @@ unsigned char DoConnection(void)
     MiApp_ProtocolInit(FALSE);
     //On définit un port par défaut
     MiApp_SetChannel(16);
-    MiApp_ConnectionMode(ENABLE_ALL_CONN);
     if(MiMAC_ReceivedPacket())
     {
         MiApp_DiscardMessage();
     }
     numberNetwork = MiApp_SearchConnection(10,0x07FFF800);
+    MiApp_ConnectionMode(ENABLE_ALL_CONN);
     if(numberNetwork > 0)
     {
         for(i = 0; i < ACTIVE_SCAN_RESULT_SIZE ; i++)
@@ -402,8 +402,10 @@ unsigned char DoConnection(void)
             if(ActiveScanResults[i].PANID.Val == myPANID.Val)
             {
                 MiApp_SetChannel(ActiveScanResults[i].Channel);
+                MiApp_ConnectionMode(ENABLE_ALL_CONN);
                 value = MiApp_EstablishConnection(i,CONN_MODE_DIRECT);
-                break;
+                //We can connect to a lot of device
+                //break;
             }
         }
     }
@@ -416,7 +418,6 @@ unsigned char DoConnection(void)
         //On lance le PAN sur le channel le moins bruité,
         value = MiApp_StartConnection(START_CONN_ENERGY_SCN,10,channelMap);
     }
-    MiApp_ConnectionMode(ENABLE_ALL_CONN);
     return value;
 }
 
