@@ -123,7 +123,7 @@ rom unsigned char addr20 = 0x83;
 rom unsigned char addr21= 0x82;
 rom unsigned char addr22 = 0x00;
 rom unsigned char addr23 = 0x00;
-rom unsigned char addr24 = 0x03;
+rom unsigned char addr24 = 0x01;
 #pragma romdata
 
 
@@ -152,6 +152,7 @@ void LitInternalParameters(pInternal pLecture);
 void WriteEntete(void);
 void ReadMasterAddress(pInternal pLecture);
 
+#pragma code
 void main(void)
 {
     Entete * pReception;
@@ -217,6 +218,8 @@ void main(void)
     Emission.IndexInGroup = travail.IndexInGroup;
     Emission.IndexOnBoard = travail.IndexOnBoard;
     Emission.lenValue = 0;
+    MiApp_ProtocolInit(FALSE);
+
     do
     {
         value = DoConnection();
@@ -239,7 +242,9 @@ void main(void)
         if(MiApp_MessageAvailable())
         {
             IgnoreMessage = FALSE;
+
             pReception = (Entete *)rxMessage.Payload;
+
             if(rxMessage.flags.bits.broadcast == 1)
             {
                 //if message is broadcast, check if message is for my group or group is broadcast
@@ -263,28 +268,25 @@ void main(void)
             }
             if(IgnoreMessage == FALSE)
             {
-                if(pReception->IndexOnBoard == 1 || pReception->IndexOnBoard == 0xFF)
+                if(pReception->IndexOnBoard == 1 || pReception->IndexOnBoard == 0xFF);
                 {
                     //If we receive command while moving shutter, we have to stop them
                     if(EtatCourrant.stateShutter1 != Iddle && pReception->Command != ShutterStop)
                     {
-                        pReception->Command = ShutterStop;
+                        pReception->Command = ShutterStop;;
                     }
                     switch(pReception->Command)
                     {
-                        case ShutterDownShort:
+                        case ShutterDown:
                             TimeOutShutter1Valid = TRUE;
                             TimeOutShutter1 = travail.MaxTimeOut;
-                        case ShutterDownLong:
-                            //Down with timer
                             CMD_VOLET1_UP = 0;
                             CMD_VOLET1_DOWN = 1;
                             EtatCourrant.stateShutter1 = Descending;
                             break;
-                        case ShutterUpShort:
+                        case ShutterUp:
                             TimeOutShutter1Valid = TRUE;
                             TimeOutShutter1 = travail.MaxTimeOut;
-                        case ShutterUpLong:
                             CMD_VOLET1_DOWN = 0;
                             CMD_VOLET1_UP = 1;
                             EtatCourrant.stateShutter1 = Rising;
@@ -386,7 +388,6 @@ unsigned char DoConnection(void)
     unsigned char noise = 0x00;
     DWORD channelMap = 0x00000001;
     //Note from Microchip, We have to clear reception
-    MiApp_ProtocolInit(FALSE);
     //On définit un port par défaut
     MiApp_SetChannel(16);
     if(MiMAC_ReceivedPacket())

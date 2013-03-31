@@ -42,10 +42,8 @@ enum EnumDeviceType
 
 enum EnumCommand
 {
-    ShutterDownShort = 1,
-    ShutterUpShort,
-    ShutterDownLong,
-    ShutterUpLong,
+    ShutterDown = 1,
+    ShutterUp,
     ShutterStop,
     RelayOn,
     RelayOff,
