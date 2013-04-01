@@ -74,7 +74,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>C18</languageToolchain>
-        <languageToolchainVersion>3.45</languageToolchainVersion>
+        <languageToolchainVersion></languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>

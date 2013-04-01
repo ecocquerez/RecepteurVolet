@@ -271,9 +271,13 @@ void main(void)
                 if(pReception->IndexOnBoard == 1 || pReception->IndexOnBoard == 0xFF);
                 {
                     //If we receive command while moving shutter, we have to stop them
-                    if(EtatCourrant.stateShutter1 != Iddle && pReception->Command != ShutterStop)
+                    //Warning, we can receive another message, so we have to check if up or down
+                    if(EtatCourrant.stateShutter1 != Iddle)
                     {
-                        pReception->Command = ShutterStop;;
+                        if(pReception->Command == ShutterDown || pReception->Command == ShutterUp)
+                        {
+                            pReception->Command = ShutterStop;;
+                        }
                     }
                     switch(pReception->Command)
                     {
