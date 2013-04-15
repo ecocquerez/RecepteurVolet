@@ -7,19 +7,31 @@
 #DEFINE _DEND _DATAEND + _DEBUGDATALEN
 
 LIBPATH .
-
-#IFDEF _CRUNTIME
-  #IFDEF _EXTENDEDMODE
-    FILES c018i_e.o
-    FILES clib_e.lib
-    FILES p18f25k50_e.lib
-
-  #ELSE
-    FILES c018i.o
-    FILES clib.lib
-    FILES p18f25k50.lib
-  #FI
-
+#IFDEF PIC18F25K50
+    #IFDEF _CRUNTIME
+      #IFDEF _EXTENDEDMODE
+        FILES c018i_e.o
+        FILES clib_e.lib
+        FILES p18f25k50_e.lib
+      #ELSE
+        FILES c018i.o
+        FILES clib.lib
+        FILES p18f25k50.lib
+      #FI
+    #FI
+#FI
+#IFDEF PIC18F2550
+    #IFDEF _CRUNTIME
+      #IFDEF _EXTENDEDMODE
+        FILES c018i_e.o
+        FILES clib_e.lib
+        FILES p18f2550_e.lib
+      #ELSE
+        FILES c018i.o
+        FILES clib.lib
+        FILES p18f2550.lib
+      #FI
+    #FI
 #FI
 
 #IFDEF _DEBUGCODESTART

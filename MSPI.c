@@ -284,12 +284,21 @@ BYTE SPIGet(void)
 
         PIR1bits.SSPIF = 0;
         i = SSPBUF;
+#ifdef PIC18F25K50
         do
         {
             SSP1CON1bits.WCOL = 0;
             SSPBUF = v;
         } while( SSP1CON1bits.WCOL );
-    
+#endif
+#ifdef PIC18F2550
+        do
+        {
+            SSPCON1bits.WCOL = 0;
+            SSPBUF = v;
+        } while( SSPCON1bits.WCOL );
+#endif
+
         while( PIR1bits.SSPIF == 0 );
         
     #endif

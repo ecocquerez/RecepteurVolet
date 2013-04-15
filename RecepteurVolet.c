@@ -5,7 +5,12 @@
  * Created on 15 octobre 2011, 18:00
  */
 #include <p18cxxx.h>
+#ifdef PIC18F25K50
 #include <p18f25k50.h>
+#endif
+#ifdef PIC18F2550
+#include <p18f2550.h>
+#endif
 #include <delays.h>
 #include <spi.h>
 #include <EEP.h>
@@ -14,6 +19,7 @@
 #include "WirelessProtocols/MCHP_API.h"
 #include "domoproto.h"
 
+#ifdef PIC18F25K50
 // CONFIG1L
 #pragma config PLLSEL = PLL4X   // PLL Selection (4x clock multiplier)
 #pragma config CFGPLLEN = OFF   // PLL Enable Configuration bit (PLL Disabled)
@@ -77,7 +83,11 @@
 
 // CONFIG7H
 #pragma config EBTRB = OFF      // Boot Block Table Read Protect (Boot block is not protected from table reads executed in other blocks)
+#endif
 
+#ifdef PIC18F2550
+
+#endif
 typedef struct defInternal
 {
     BYTE SendAlive;
@@ -166,20 +176,24 @@ void main(void)
     // primary internal oscillator
     //OSCCON = 0x7B;
     OSCCON = 0b01101000;
+#ifdef PIC18F25K50
+
     while(OSCCONbits.HFIOFS == 0)
     {
         //Waiting for stable frequency
         Nop();
     }
-
+#endif
     EtatCourrant.stateShutter1 = Iddle;
     EtatCourrant.stateShutter2 = Iddle;
     TimeOutShutter1 = FALSE;
     TimeOutShutter2 = FALSE;
     HaveToSendHearthBeat = 0;
     CCP1CON = 0x00;
+#ifdef PIC18F25K50
     ANSELA = 0x00;
     ANSELB = 0x00;
+#endif
     TRISA = TRISA & 0xB8;
     TRISB = 0x04;
     //Shutter output
@@ -202,11 +216,21 @@ void main(void)
 
     // SPI configuration
     //Reset du miwi
+#ifdef PIC18F25K50
     DisableIntSPI1;
 
     BoardInit();
     CloseSPI1();
     OpenSPI1(SPI_FOSC_64,MODE_00,SMPMID);
+#endif
+#ifdef PIC18F2550
+    DisableIntSPI;
+
+    BoardInit();
+    CloseSPI();
+    OpenSPI(SPI_FOSC_64,MODE_00,SMPMID);
+#endif
+
     //Read necessary Miwi Information in eeprom
     LitMyMiwiAddress();
     LitMyPrivatePanID();
