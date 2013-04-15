@@ -23,12 +23,6 @@
 #define PHY_RESETn      LATBbits.LATB5
 #define PHY_RESETn_TRIS TRISBbits.TRISB5
 
-//Gestion de la commande des volets
-#define CMD_UP          LATCbits.LATC0
-#define CMD_UP_TRIS     TRISCbits.TRISC0
-#define CMD_DOWN        LATCbits.LATC1
-#define CMD_DOWN_TRIS   TRISCbits.TRISC1
-
 #define TMRL            TMR0L
 #define GetInstructionClock()	(CLOCK_FREQ/4)
 
