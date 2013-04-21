@@ -37,7 +37,6 @@
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
-      <itemPath>Linker/specif18f25k50_g.lkr</itemPath>
     </logicalFolder>
     <logicalFolder name="ObjectFiles"
                    displayName="Object Files"
@@ -217,7 +216,7 @@
         <property key="default-char-unsigned" value="false"/>
         <property key="enable-all-optimizations" value="true"/>
         <property key="enable-int-promotion" value="false"/>
-        <property key="enable-multi-bank-stack-model" value="false"/>
+        <property key="enable-multi-bank-stack-model" value="true"/>
         <property key="enable-ob" value="true"/>
         <property key="enable-od" value="true"/>
         <property key="enable-om" value="true"/>
@@ -250,7 +249,7 @@
         <property key="extra-lib-directories"
                   value="/home/Eric/MPLABXProjects/RecepteurVolet/Libraries"/>
         <property key="hex-output-format" value="INHX32"/>
-        <property key="map-file" value=""/>
+        <property key="map-file" value="rep2550.map"/>
       </C18-LD>
       <C18LanguageToolchain>
         <property key="extended-mode" value="false"/>

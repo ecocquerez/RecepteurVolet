@@ -83,35 +83,35 @@ ifeq ($(TYPE_IMAGE), DEBUG_RUN)
 ${OBJECTDIR}/MSPI.o: MSPI.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/MSPI.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MSPI.o   MSPI.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MSPI.o   MSPI.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/MSPI.o 
 	@${FIXDEPS} "${OBJECTDIR}/MSPI.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/SymbolTime.o: SymbolTime.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/SymbolTime.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/SymbolTime.o   SymbolTime.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/SymbolTime.o   SymbolTime.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/SymbolTime.o 
 	@${FIXDEPS} "${OBJECTDIR}/SymbolTime.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/P2P.o: P2P.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/P2P.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/P2P.o   P2P.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/P2P.o   P2P.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/P2P.o 
 	@${FIXDEPS} "${OBJECTDIR}/P2P.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/MRF24J40.o: MRF24J40.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/MRF24J40.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MRF24J40.o   MRF24J40.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MRF24J40.o   MRF24J40.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/MRF24J40.o 
 	@${FIXDEPS} "${OBJECTDIR}/MRF24J40.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/RecepteurVolet.o: RecepteurVolet.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/RecepteurVolet.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/RecepteurVolet.o   RecepteurVolet.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/RecepteurVolet.o   RecepteurVolet.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/RecepteurVolet.o 
 	@${FIXDEPS} "${OBJECTDIR}/RecepteurVolet.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
@@ -119,35 +119,35 @@ else
 ${OBJECTDIR}/MSPI.o: MSPI.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/MSPI.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MSPI.o   MSPI.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MSPI.o   MSPI.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/MSPI.o 
 	@${FIXDEPS} "${OBJECTDIR}/MSPI.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/SymbolTime.o: SymbolTime.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/SymbolTime.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/SymbolTime.o   SymbolTime.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/SymbolTime.o   SymbolTime.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/SymbolTime.o 
 	@${FIXDEPS} "${OBJECTDIR}/SymbolTime.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/P2P.o: P2P.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/P2P.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/P2P.o   P2P.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/P2P.o   P2P.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/P2P.o 
 	@${FIXDEPS} "${OBJECTDIR}/P2P.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/MRF24J40.o: MRF24J40.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/MRF24J40.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MRF24J40.o   MRF24J40.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/MRF24J40.o   MRF24J40.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/MRF24J40.o 
 	@${FIXDEPS} "${OBJECTDIR}/MRF24J40.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
 ${OBJECTDIR}/RecepteurVolet.o: RecepteurVolet.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR} 
 	@${RM} ${OBJECTDIR}/RecepteurVolet.o.d 
-	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa-  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/RecepteurVolet.o   RecepteurVolet.c 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -p$(MP_PROCESSOR_OPTION) -DPIC18F2550 -I"." -I".." -I"../.." -ml -oa- -Ls  -I ${MP_CC_DIR}\\..\\h  -fo ${OBJECTDIR}/RecepteurVolet.o   RecepteurVolet.c 
 	@${DEP_GEN} -d ${OBJECTDIR}/RecepteurVolet.o 
 	@${FIXDEPS} "${OBJECTDIR}/RecepteurVolet.o.d" $(SILENT) -rsi ${MP_CC_DIR}../ -c18 
 	
@@ -156,13 +156,13 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: link
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-dist/${CND_CONF}/${IMAGE_TYPE}/RecepteurVolet.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  Libraries/clib.lib Libraries/p18F2550.lib  Linker/specif18f25k50_g.lkr
+dist/${CND_CONF}/${IMAGE_TYPE}/RecepteurVolet.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  Libraries/clib.lib Libraries/p18F2550.lib  
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	${MP_LD} $(MP_EXTRA_LD_PRE) "Linker\specif18f25k50_g.lkr"  -p$(MP_PROCESSOR_OPTION_LD)  -w -x -u_DEBUG -l"/home/Eric/MPLABXProjects/RecepteurVolet/Libraries"  -z__MPLAB_BUILD=1  -u_CRUNTIME -z__MPLAB_DEBUG=1 -z__MPLAB_DEBUGGER_PK3=1 $(MP_LINKER_DEBUG_OPTION) -l ${MP_CC_DIR}\\..\\lib  -o dist/${CND_CONF}/${IMAGE_TYPE}/RecepteurVolet.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}  Libraries\clib.lib Libraries\p18F2550.lib 
+	${MP_LD} $(MP_EXTRA_LD_PRE)   -p$(MP_PROCESSOR_OPTION_LD)  -w -x -u_DEBUG -m"rep2550.map" -l"/home/Eric/MPLABXProjects/RecepteurVolet/Libraries"  -z__MPLAB_BUILD=1  -u_CRUNTIME -z__MPLAB_DEBUG=1 -z__MPLAB_DEBUGGER_PK3=1 $(MP_LINKER_DEBUG_OPTION) -l ${MP_CC_DIR}\\..\\lib  -o dist/${CND_CONF}/${IMAGE_TYPE}/RecepteurVolet.${IMAGE_TYPE}.${OUTPUT_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}  Libraries\clib.lib Libraries\p18F2550.lib 
 else
-dist/${CND_CONF}/${IMAGE_TYPE}/RecepteurVolet.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  Libraries/clib.lib Libraries/p18F2550.lib Linker/specif18f25k50_g.lkr
+dist/${CND_CONF}/${IMAGE_TYPE}/RecepteurVolet.${IMAGE_TYPE}.${OUTPUT_SUFFIX}: ${OBJECTFILES}  nbproject/Makefile-${CND_CONF}.mk  Libraries/clib.lib Libraries/p18F2550.lib 
 	@${MKDIR} dist/${CND_CONF}/${IMAGE_TYPE} 
-	${MP_LD} $(MP_EXTRA_LD_PRE) "Linker\specif18f25k50_g.lkr"  -p$(MP_PROCESSOR_OPTION_LD)  -w  -l"/home/Eric/MPLABXProjects/RecepteurVolet/Libraries"  -z__MPLAB_BUILD=1  -u_CRUNTIME -l ${MP_CC_DIR}\\..\\lib  -o dist/${CND_CONF}/${IMAGE_TYPE}/RecepteurVolet.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}  Libraries\clib.lib Libraries\p18F2550.lib 
+	${MP_LD} $(MP_EXTRA_LD_PRE)   -p$(MP_PROCESSOR_OPTION_LD)  -w  -m"rep2550.map" -l"/home/Eric/MPLABXProjects/RecepteurVolet/Libraries"  -z__MPLAB_BUILD=1  -u_CRUNTIME -l ${MP_CC_DIR}\\..\\lib  -o dist/${CND_CONF}/${IMAGE_TYPE}/RecepteurVolet.${IMAGE_TYPE}.${DEBUGGABLE_SUFFIX}  ${OBJECTFILES_QUOTED_IF_SPACED}  Libraries\clib.lib Libraries\p18F2550.lib 
 endif
 
 

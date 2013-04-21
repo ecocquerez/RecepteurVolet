@@ -93,11 +93,11 @@
 
 // CONFIG1H
 #pragma config FOSC = INTOSC_HS // Oscillator Selection bits (Internal oscillator, HS oscillator used by USB (INTHS))
-#pragma config FCMEN = OFF      // Fail-Safe Clock Monitor Enable bit (Fail-Safe Clock Monitor disabled)
+#pragma config FCMEN = OFF       // Fail-Safe Clock Monitor Enable bit (Fail-Safe Clock Monitor enabled)
 #pragma config IESO = OFF       // Internal/External Oscillator Switchover bit (Oscillator Switchover mode disabled)
 
 // CONFIG2L
-#pragma config PWRT = OFF       // Power-up Timer Enable bit (PWRT disabled)
+#pragma config PWRT = ON        // Power-up Timer Enable bit (PWRT enabled)
 #pragma config BOR = OFF        // Brown-out Reset Enable bits (Brown-out Reset disabled in hardware and software)
 #pragma config BORV = 3         // Brown-out Reset Voltage bits (Minimum setting)
 #pragma config VREGEN = OFF     // USB Voltage Regulator Enable bit (USB voltage regulator disabled)
@@ -108,13 +108,13 @@
 
 // CONFIG3H
 #pragma config CCP2MX = ON      // CCP2 MUX bit (CCP2 input/output is multiplexed with RC1)
-#pragma config PBADEN = ON      // PORTB A/D Enable bit (PORTB<4:0> pins are configured as analog input channels on Reset)
+#pragma config PBADEN = OFF     // PORTB A/D Enable bit (PORTB<4:0> pins are configured as digital I/O on Reset)
 #pragma config LPT1OSC = OFF    // Low-Power Timer 1 Oscillator Enable bit (Timer1 configured for higher power operation)
 #pragma config MCLRE = ON       // MCLR Pin Enable bit (MCLR pin enabled; RE3 input pin disabled)
 
 // CONFIG4L
-#pragma config STVREN = ON      // Stack Full/Underflow Reset Enable bit (Stack full/underflow will cause Reset)
-#pragma config LVP = ON         // Single-Supply ICSP Enable bit (Single-Supply ICSP enabled)
+#pragma config STVREN = OFF     // Stack Full/Underflow Reset Enable bit (Stack full/underflow will not cause Reset)
+#pragma config LVP = OFF        // Single-Supply ICSP Enable bit (Single-Supply ICSP disabled)
 #pragma config XINST = OFF      // Extended Instruction Set Enable bit (Instruction set extension and Indexed Addressing mode disabled (Legacy mode))
 
 // CONFIG5L
@@ -169,32 +169,34 @@ typedef struct defShutterState
 BYTE    AdditionalNodeID[ADDITIONAL_NODE_ID_SIZE] = {0x32};
 #endif
 
-#pragma romdata myaddress
-rom unsigned char addr1 = 0x06;
-rom unsigned char addr2 = 0x08;
-rom unsigned char addr3 = 0x26;
-rom unsigned char addr4 = 0x83;
-rom unsigned char addr5 = 0x82;
-rom unsigned char addr6 = 0x00;
-rom unsigned char addr7 = 0x00;
-rom unsigned char addr8 = 0x02;
-rom unsigned char addr9 = 0x14;
-rom unsigned char addr10 = 0x01;
-rom unsigned char addr11 = 0x01;    //Send Alive
-rom unsigned char addr12 = 0x3C;    //Periode
-rom unsigned char addr13 = 0x01;    //Group
-rom unsigned char addr14 = 0x01;    //Index In Group
-rom unsigned char addr15 = 0x01;    //Index On Board
-rom unsigned char addr16 = 0x50;    //TimeOut
-rom unsigned char addr17 = 0x06;     //Master Address
-rom unsigned char addr18 = 0x08;
-rom unsigned char addr19 = 0x26;
-rom unsigned char addr20 = 0x83;
-rom unsigned char addr21= 0x82;
-rom unsigned char addr22 = 0x00;
-rom unsigned char addr23 = 0x00;
-rom unsigned char addr24 = 0x01;
-#pragma romdata
+#pragma romdata eeprom_data=0xf00000
+rom unsigned char info_eeprom[] = {
+0x06,
+0x08,
+0x26,
+0x83,
+0x82,
+0x00,
+0x00,
+0x03,
+0x14,
+0x01,
+0x01,    //Send Alive
+0x3C,    //Periode
+0x01,    //Group
+0x01,    //Index In Group
+0x01,    //Index On Board
+0x50,    //TimeOut
+0x06,     //Master Address
+0x08,
+0x26,
+0x83,
+0x82,
+0x00,
+0x00,
+0x01
+};
+#pragma code
 
 
 extern ACTIVE_SCAN_RESULT ActiveScanResults[ACTIVE_SCAN_RESULT_SIZE];
@@ -209,8 +211,10 @@ volatile unsigned char TimeOutShutter1;
 volatile unsigned char TimeOutShutter2;
 volatile BYTE ledValue = 0;
 
+#pragma udata
 Entete Emission;
 Internal travail;
+#pragma code
 
 void BoardInit(void);
 void LitMyMiwiAddress(void);
@@ -477,15 +481,15 @@ unsigned char DoConnection(void)
             }
         }
     }
-    else
-    {
-        //On recherche un canal pas trop brouillé
-        value = MiApp_NoiseDetection(0x07FFF800,10,NOISE_DETECT_ENERGY,&noise);
-        //On recalcule le channelMap
-        channelMap = channelMap << value;
-        //On lance le PAN sur le channel le moins bruité,
-        value = MiApp_StartConnection(START_CONN_ENERGY_SCN,10,channelMap);
-    }
+//    else
+//    {
+//        //On recherche un canal pas trop brouillé
+//        value = MiApp_NoiseDetection(0x07FFF800,10,NOISE_DETECT_ENERGY,&noise);
+//        //On recalcule le channelMap
+//        channelMap = channelMap << value;
+//        //On lance le PAN sur le channel le moins bruité,
+//        value = MiApp_StartConnection(START_CONN_ENERGY_SCN,10,channelMap);
+//    }
     return value;
 }
 
@@ -495,6 +499,9 @@ void BoardInit(void)
     INTCONbits.GIEH = 1;
     RFIF = 0;
     RFIE = 1;
+    TRISCbits.TRISC7 = 0;
+    TRISBbits.TRISB0 = 1;
+    TRISBbits.TRISB1 = 0;
     //Led de control
     TRISCbits.TRISC6 = 0;
     LATCbits.LATC6  = 0;
@@ -515,6 +522,7 @@ void BoardInit(void)
 #endif
     TRISA = TRISA & 0xB8;
     TRISB = 0x04;
+    TRISC = 0x00;
     INTCON2bits.RBPU = 0;
     INTCON2bits.INTEDG2 = 0;
     //Timer 1
