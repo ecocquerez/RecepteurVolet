@@ -465,6 +465,8 @@ unsigned char DoConnection(void)
     {
         MiApp_DiscardMessage();
     }
+    //Suppression de toutes les connexions existantes
+    MiApp_RemoveConnection(0xFF);
     numberNetwork = MiApp_SearchConnection(10,0x07FFF800);
     MiApp_ConnectionMode(ENABLE_ALL_CONN);
     if(numberNetwork > 0)
@@ -473,9 +475,14 @@ unsigned char DoConnection(void)
         {
             if(ActiveScanResults[i].PANID.Val == myPANID.Val)
             {
-                MiApp_SetChannel(ActiveScanResults[i].Channel);
-                MiApp_ConnectionMode(ENABLE_ALL_CONN);
-                value = MiApp_EstablishConnection(i,CONN_MODE_DIRECT);
+                //We connect only on the master
+                if(ActiveScanResults[i].Address[7] == 0x01)
+                {
+                    MiApp_SetChannel(ActiveScanResults[i].Channel);
+                    MiApp_ConnectionMode(ENABLE_ALL_CONN);
+                    value = MiApp_EstablishConnection(i,CONN_MODE_DIRECT);
+                    break;
+                }
                 //We can connect to a lot of device
                 //break;
             }
